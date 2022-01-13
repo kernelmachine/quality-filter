@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 
-def build_school_category_plot(high_schools, news, save=False, save_path):
+def build_school_category_plot(high_schools, news, save=False, save_path=None):
     f, axes = plt.subplots(2,1, figsize=(4,6))
 
     samples = []

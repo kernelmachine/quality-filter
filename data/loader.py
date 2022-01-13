@@ -10,7 +10,6 @@ def load_and_score(path="articles-high-reliability-clean.jsonl"):
     news = pd.read_json(path, lines=True).drop_duplicates(subset=['text'])
     news = score_text(news, clf, clf_vectorizer)
     news = get_counts(news)
-    news['GPT3_included'] = news.prob_high_quality.apply(lambda x: np.random.pareto(9) > (1 - x))
     return news
 
 

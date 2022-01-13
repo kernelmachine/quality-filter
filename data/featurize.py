@@ -243,7 +243,7 @@ def merge_political_features(features, path='countypres_2000-2020.tsv'):
     return features
 
 
-def featurize(df):
+def demographic_featurize(df):
     """
     main featurization function
     """
@@ -302,4 +302,29 @@ def preprocess(features, regression_features , impute_only=False):
     features['rural_top_30'] = (features['pct_rural'] > features.pct_rural.quantile(0.7)).astype('category')
 
     return features
+
+
+
+def text_featurize(df):
+    text_features = {}
+    text_features['num_tokens'] = df.num_tokens
+    text_features['prob_high_quality'] = df.prob_high_quality
+
+    first_person_words = set(["i", "me", "my", "mine", "our", "ours", "us", "we", 'your', 'yours'])
+    third_person_words = set(["he", "him", "his", "she", "her", "hers", "it", "its", "they", "them", "their", "theirs"])
+    text_features['first_person'] = df.text.progress_apply(lambda x: first_person_words & set(x.lower().split()))
+    text_features['third_person'] = df.text.progress_apply(lambda x: third_person_words & set(x.lower().split()))
+
+    text_features['topic'] = df.cluster
+
+    text_features = pd.DataFrame(text_features)
+    text_features['first_person'] = text_features['first_person'].progress_apply(lambda x: len(x))
+    text_features['third_person'] = text_features['third_person'].progress_apply(lambda x: len(x))
+
+    for feature in ['first_person', 'third_person', 'num_tokens']:
+        text_features[feature] = np.log(text_features[feature] + 1e-5)
+        text_features[feature] = stats.zscore(text_features[feature])
+        
+    return text_features
+
 
