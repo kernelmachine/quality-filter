@@ -1,0 +1,12 @@
+name: ideology
+channels:
+  - defaults
+dependencies:
+  - python=3.7
+  - pip:
+    - pandas
+    - numpy
+    - scipy
+    - seaborn
+    - matplotlib
+    - jupyter

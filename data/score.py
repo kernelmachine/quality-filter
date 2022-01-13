@@ -14,9 +14,10 @@ def score_text(df, clf, clf_vectorizer, field='text'):
 
 def get_counts(df, field='text'):
     # count number of whitespace tokens
+    tqdm.pandas()
     df['num_tokens'] = df[field].progress_apply(lambda x: len(x.split()))
     return df
 
-def score(x):
+def score(x, clf, vectorizer):
     # score a single document
-    return clf.predict_proba(clf_vectorizer.transform([x]))
+    return clf.predict_proba(vectorizer.transform([x]))

@@ -306,6 +306,9 @@ def preprocess(features, regression_features , impute_only=False):
 
 
 def text_featurize(df):
+    """
+    featurize text for the document-level regression
+    """
     text_features = {}
     text_features['num_tokens'] = df.num_tokens
     text_features['prob_high_quality'] = df.prob_high_quality
@@ -326,5 +329,7 @@ def text_featurize(df):
         text_features[feature] = stats.zscore(text_features[feature])
         
     return text_features
+
+
 
 
