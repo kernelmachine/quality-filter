@@ -20,4 +20,4 @@ jupyter notebook
 
 `Filter.ipynb`: reproduce the quality filter in the paper
 
-`Figures.ipynb`: reproduce other figures in the paper
+`Additional Figures.ipynb`: reproduce other figures in the paper
