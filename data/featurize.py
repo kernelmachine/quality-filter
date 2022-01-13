@@ -63,8 +63,18 @@ def merge_zipcode_features(features, path='zipcode_data.jsonl'):
 
     features = features.merge(zipcode_data, on='zipcode',  how='left')
     features.shape
+
+  
     return features
     
+def merge_income_features(features, path='18zpallnoagi.csv'):
+    irs_data = pd.read_csv(DATA_DIR / path)
+    irs_data['income_per_capita'] = stats.zscore(np.log(irs_data['A04800'] / irs_data['N04800'] + 1e-5))
+    irs_data['tax_per_capita'] =  stats.zscore(np.log((irs_data['A11901'] /(irs_data['N11901'] + 1e-5)).sort_values() + 1))
+    features = features.merge(irs_data,how='left', left_on='zipcode', right_on='ZIPCODE')
+    features.shape
+    return features
+
 def load_private_school_data(path='ELSI_csv_export_6377702192917155939481.csv'):
     """
     add in private school info from NCES
@@ -138,8 +148,8 @@ def load_public_school_data(path='ELSI_csv_export_6377702205999255091950.csv'):
     public_school_dem['is_public'] = 1
     public_school_dem['is_private'] = 0
     public_school_dem['locale'] = public_school_dem['Urban-centric Locale [Public School] 2017-18']
-    public_school_dem['is_charter'] = public_school_dem['Charter School [Public School] 2017-18']
-    public_school_dem['is_magnet'] = public_school_dem['Magnet School [Public School] 2017-18']
+    public_school_dem['is_charter'] = public_school_dem['Charter School [Public School] 2017-18'].fillna(0)
+    public_school_dem['is_magnet'] = public_school_dem['Magnet School [Public School] 2017-18'].fillna(0)
     public_school_dem['school_size'] = public_school_dem['Total Students All Grades (Excludes AE) [Public School] 2017-18'].str.extract("(\d+)").astype('float')
     public_school_dem['pupil_ratio'] = public_school_dem['Pupil/Teacher Ratio [Public School] 2017-18'].str.extract("(\d+\.?\d+)").astype('float')
     public_school_dem['fte_teachers'] = public_school_dem['Full-Time Equivalent (FTE) Teachers [Public School] 2017-18'].str.extract("(\d+\.?\d+)").astype('float')
@@ -191,9 +201,14 @@ def merge_school_features(features, public_school_dem, private_school_dem, on_zi
     school_demographics = pd.concat([private_school_dem, public_school_dem], 0).drop_duplicates(subset=['school:zipcode:county:state'])
     fs = ['county:state', 'school:zipcode:county:state','zipcode:county:state', 'state', 'zipcode', 'black_ratio', 'hispanic_ratio', 'white_ratio', 'asian_ratio', 'mixed_ratio', 'native_ratio', 'pacific_islander_ratio', 'locale', 'school_size', 'pupil_ratio', 'fte_teachers', 'is_private', 'is_public', 'is_charter','is_magnet']
     school_demographics = school_demographics[fs].copy()
-    
+    school_demographics['is_charter'] = school_demographics.is_charter.astype(int).astype('category')
+    school_demographics['is_magnet'] = school_demographics.is_magnet.astype(int).astype('category')
+    school_demographics['is_private'] = school_demographics.is_private.astype(int).astype('category')
+    school_demographics['is_public'] = school_demographics.is_public.astype(int).astype('category')
+
     school_demographics = impute(school_demographics)
     school_demographics = pd.concat([school_demographics, pd.get_dummies(school_demographics['locale'])], 1)
+
     school_demographics['city'] = school_demographics['11-City: Large'] + school_demographics['12-City: Mid-size'] + school_demographics['13-City: Small'] 
     school_demographics['suburb'] = school_demographics['21-Suburb: Large'] + school_demographics['22-Suburb: Mid-size'] + school_demographics['23-Suburb: Small'] 
     school_demographics['town'] = school_demographics['31-Town: Fringe'] + school_demographics['32-Town: Distant'] + school_demographics['33-Town: Remote'] 
@@ -252,6 +267,8 @@ def demographic_featurize(df):
     print('merging zipcode features...')
 
     features = merge_zipcode_features(features)
+    features = merge_income_features(features)
+
     items = features['school:zipcode:county:state'].unique().tolist()
     print('loading school data...')
 
@@ -297,9 +314,11 @@ def preprocess(features, regression_features , impute_only=False):
             features[feature['new_name']] = features[feature['feature']]
             features = features.drop([feature['feature']], axis=1)
 
-    features['rural_buckets'] = pd.cut(features['pct_rural'], 3, labels=['rural_1', 'rural_2', 'rural_3'])
     features['urban_top_30'] = (features['pct_rural'] < features.pct_rural.quantile(0.3)).astype('category')
     features['rural_top_30'] = (features['pct_rural'] > features.pct_rural.quantile(0.7)).astype('category')
+    features['is_charter'] = features['is_charter'].fillna(0)
+    features['is_magnet'] = features['is_magnet'].fillna(0)
+    features['is_private'] = features['is_private'].fillna(0)
 
     return features
 

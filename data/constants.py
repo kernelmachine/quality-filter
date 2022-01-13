@@ -30,22 +30,18 @@ education_features = [
             {'feature': 'num_degree_holders', 'zscore': True, 'log': True, 'type': 'wealth', 'new_name': None ,'outlier_removal': None},
             {'feature': 'pupil_ratio', 'zscore': True, 'log': True, 'type': 'other', 'new_name': None,'outlier_removal': None},
             {'feature': 'fte_teachers', 'zscore': True, 'log': False, 'type': 'other', 'new_name': None,'outlier_removal': None},
-            {'feature': 'is_magnet', 'zscore': False, 'log': False, 'type': 'other', 'new_name': None,'outlier_removal': None},
-            {'feature': 'is_charter', 'zscore': False, 'log': False, 'type': 'other', 'new_name': None,'outlier_removal': None},
-            {'feature': 'is_private', 'zscore': False, 'log': False, 'type': 'other', 'new_name': None,'outlier_removal': None},
 
 ]
 
 
 population_features = [                   
             {'feature': 'population_density', 'zscore': True, 'log': True, 'type': 'other', 'new_name': None ,'outlier_removal': None},
-            {'feature': 'school_size', 'zscore': True, 'log': True, 'type': 'other', 'new_name': None ,'outlier_removal': None},
+            {'feature': 'school_size', 'zscore': True, 'log': False, 'type': 'other', 'new_name': None ,'outlier_removal': None},
             {'feature': 'city', 'zscore': True, 'log': True, 'type': 'wealth', 'new_name': None,'outlier_removal': None},
             {'feature': 'suburb', 'zscore': True, 'log': True, 'type': 'wealth', 'new_name': None,'outlier_removal': None},
             {'feature': 'town', 'zscore': True, 'log': True, 'type': 'wealth', 'new_name': None,'outlier_removal': None},
             {'feature': 'rural', 'zscore': True, 'log': True, 'type': 'wealth', 'new_name': None,'outlier_removal': None},
             {'feature': 'POPPCT_RURAL', 'zscore': True, 'log': True, 'type': 'other', 'new_name': 'pct_rural','outlier_removal': None},
-
 ]
 
 wealth_features =  [
