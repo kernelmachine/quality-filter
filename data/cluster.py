@@ -11,7 +11,7 @@ from data.viz import boxplot
 
 sns.set(style='white', font_scale=1.4, context='paper')
 
-def cluster_text(z, num_clusters=10, num_words=10, plot_boxplot=False):
+def cluster_text(z, num_clusters=10, num_words=10, plot_boxplot=False, save=False, save_path=None):
     cv = TfidfVectorizer(
         max_features=10000,
         min_df=3,
@@ -37,6 +37,6 @@ def cluster_text(z, num_clusters=10, num_words=10, plot_boxplot=False):
     clusters = pd.DataFrame(clusters)
     z['cluster'] = z.cluster.astype('category')
     if plot_boxplot:
-        boxplot(z, clusters)
+        boxplot(z, clusters, save=save, save_path=save_path)
     return z
 
