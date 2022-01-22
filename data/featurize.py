@@ -302,7 +302,7 @@ def preprocess(features, regression_features , impute_only=False):
 
     for ix, feature in regression_features.iterrows():
         if feature['log']:
-            features[feature['feature']] = np.log(features[feature['feature']] + 1e-5)
+            features[feature['feature']] = np.log2(features[feature['feature']] + 1e-5)
         if feature['zscore']:
             features[feature['feature']] = stats.zscore(features[feature['feature']])
             if feature.get('remove_outliers'):
