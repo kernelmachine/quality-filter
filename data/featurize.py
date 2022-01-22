@@ -318,8 +318,11 @@ def preprocess(features, regression_features , impute_only=False):
     features['rural_top_30'] = (features['pct_rural'] > features.pct_rural.quantile(0.7)).astype('category')
     features['is_charter'] = features['is_charter'].fillna(0)
     features['is_magnet'] = features['is_magnet'].fillna(0)
-    features['is_private'] = features['is_private'].fillna(0)
-
+    # features['is_private'] = features['is_private'].fillna(0)
+    # features['is_public'] = features['is_public'].fillna(0)
+    features = features.loc[features.school_size > -15]
+    features = features.dropna(subset=['is_private', 'is_public'])
+    features['pct_rural'] = features['pct_rural']/100
     return features
 
 
