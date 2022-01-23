@@ -343,12 +343,10 @@ def text_featurize(df):
     text_features['topic'] = df.cluster
 
     text_features = pd.DataFrame(text_features)
-    text_features['first_person'] = text_features['first_person'].progress_apply(lambda x: len(x))
-    text_features['third_person'] = text_features['third_person'].progress_apply(lambda x: len(x))
-
-    for feature in ['first_person', 'third_person', 'num_tokens']:
-        text_features[feature] = np.log(text_features[feature] + 1e-5)
-        text_features[feature] = stats.zscore(text_features[feature])
+    text_features['first_person'] = text_features['first_person'].progress_apply(lambda x: len(x) > 0)
+    text_features['third_person'] = text_features['third_person'].progress_apply(lambda x: len(x) > 0)
+    
+    text_features['num_tokens'] = np.log2(text_features['num_tokens'] + 1e-5)
         
     return text_features
 

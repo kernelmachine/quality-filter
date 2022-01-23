@@ -9,7 +9,7 @@ def count_mentions(word):
     num_mentions = 0
 
     for chunk in tqdm(df):
-        n_mention = chunk.text.apply(lambda x: counter(word, x)).sum()
+        n_mention = chunk.text.apply(lambda x: x.lower().count(word)).sum()
         num_mentions += n_mention
 
 
